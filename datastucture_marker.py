@@ -232,25 +232,63 @@ def processMarker(ids, fixedCorners, rvecs, tvecs):
     # [number of markers][average of x value][average of y value][average of z value]
     # all initialized to zero
     np.zeros
-    aggregatedMarker = np.zeros((11,1,4),np.float32)
+    aggregatedMarker = np.zeros((11,4),np.float32)
 
-    print(aggregatedMarker)
     length = ids.size
     for x in range(length):
         currentId = ids[x][0]
-        aggregatedMarker[currentId][0][0] += 1
-        aggregatedMarker[currentId][0][1] += tvecs[x][0][0]
-        aggregatedMarker[currentId][0][2] += tvecs[x][0][1]
-        aggregatedMarker[currentId][0][3] += tvecs[x][0][2]
+        aggregatedMarker[currentId][0] += 1
+        aggregatedMarker[currentId][1] += tvecs[x][0][0]
+        aggregatedMarker[currentId][2] += tvecs[x][0][1]
+        aggregatedMarker[currentId][3] += tvecs[x][0][2]
 
     for x in range(11):
-        if aggregatedMarker[x][0][0] != 0:
-            aggregatedMarker[x][0][1] /= aggregatedMarker[x][0][0]
-            aggregatedMarker[x][0][2] /= aggregatedMarker[x][0][0]
-            aggregatedMarker[x][0][3] /= aggregatedMarker[x][0][0]
+        if aggregatedMarker[x][0] != 0:
+            aggregatedMarker[x][1] /= aggregatedMarker[x][0]
+            aggregatedMarker[x][2] /= aggregatedMarker[x][0]
+            aggregatedMarker[x][3] /= aggregatedMarker[x][0]
 
     return aggregatedMarker
 
+
+class currentMarkerLocation:
+    """
+    Save all the marker location data to calculate the speed of marker.
+    """
+    def __init__(self, prev = None, cur = None):
+        self.prev = prev
+        self.cur = cur
+
+    def updateLocation(self, cur):
+        self.prev = self.cur
+        self.cur = cur
+
+    def calculateMarkerSpeed(self):
+        prevLoc = self.prev
+        currentLoc = self.cur
+        speed_vector = np.zeros((12, 3), np.float32)
+
+        if prevLoc is None:
+            return speed_vector
+
+        for x in range(11):
+            prev_x_data = prevLoc[x][1]
+            cur_x_data = currentLoc[x][1]
+            prev_y_data = prevLoc[x][2]
+            cur_y_data = currentLoc[x][2]
+            prev_z_data = prevLoc[x][3]
+            cur_z_data = currentLoc[x][3]
+            speed_vector[x][0] = cur_x_data - prev_x_data
+            speed_vector[x][1] = cur_y_data - prev_y_data
+            speed_vector[x][2] = cur_z_data - prev_z_data
+            speed_vector[11][0] += speed_vector[x][0]
+            speed_vector[11][1] += speed_vector[x][1]
+            speed_vector[11][2] += speed_vector[x][2]
+
+        for x in range(3):
+            speed_vector[11][x] /= 10
+
+        return speed_vector
 
 
 class markerGraph:
@@ -318,7 +356,7 @@ def markerDatabase():
     # ID 1~5
     global bottle, book, book2, cap, flower_pot
     # ID 6~10
-    global table_corner, purifier, fire_extinguisher, door, calander
+    global table_corner, purifier, fire_extinguisher, door, calendar
 
     bottle = markerNode("Bottle", 1)
     book = markerNode("Book:실감나게배우는제어공학", 2)
@@ -329,7 +367,8 @@ def markerDatabase():
     purifier = markerNode("purifier", 7)
     fire_extinguisher = markerNode("fire_extinguisher", 8)
     door = markerNode("door", 9)
-    calander = markerNode("calander", 10)
+    calendar = markerNode("calendar", 10)
+
 
 #main function
 if __name__ == '__main__':
@@ -341,9 +380,31 @@ if __name__ == '__main__':
     getCharucoBoardImgfromCamera()
     allCorners, allIds, imsize = calibrateFromCharucoBoardImage(charucoBoard)
     ret, mtx, dist, rvecs, tvecs = calibrate_camera(allCorners, allIds, imsize, charucoBoard)
+    currentMarkerLocation = currentMarkerLocation(None)
 
-    ids, fixedCorners, rvecs, tvecs = findMarkerOnScreen(mtx, dist, rvecs, tvecs)
+    while(1):
+        step = 0
+        ids, fixedCorners, rvecs, tvecs = findMarkerOnScreen(mtx, dist, rvecs, tvecs)
 
-    aggregatedMarker = processMarker(ids, fixedCorners, rvecs, tvecs)
+        if ids is None:
+            print("Can't recognize")
+            continue
+
+        aggregatedMarker = processMarker(ids, fixedCorners, rvecs, tvecs)
+
+        currentMarkerLocation.updateLocation(aggregatedMarker)
+
+        print(aggregatedMarker)
+
+        cv.waitKey(0)
+
+        speed_vector = currentMarkerLocation.calculateMarkerSpeed()
+
+        print("speed")
+        print(speed_vector)
+
+        step += 1
+
+
 
     print(aggregatedMarker)
