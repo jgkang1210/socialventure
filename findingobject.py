@@ -445,6 +445,7 @@ def html_sending(s):
 #main function
 if __name__ == '__main__':
     findingId = 5 # 꽃병
+    html_init()
 
     #create marker database
     markerDatabase = markerDatabase()

@@ -438,6 +438,7 @@ def html_sending(s):
 #main function
 if __name__ == '__main__':
     #create marker database
+    html_init()
     markerDatabase = markerDatabase()
     markerDatabase.initialize()
 
