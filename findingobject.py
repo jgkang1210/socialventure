@@ -197,7 +197,7 @@ def findMarkerOnScreen(mtx, dist, rvecs, tvecs):
 
         if tvecs is None:
             cv.imshow('output', frame)
-            print("-----------------------------")
+            #print("-----------------------------")
             k = cv.waitKey(10) & 0xFF
             # press esc to terminate
             if k == 27:
@@ -332,6 +332,13 @@ class currentMarkerLocation:
         stringList = markerDatabase.findObjectById(id-1) + "를 잡으셨습니다!"
         return stringList
 
+    def findThisId(self, markerDatabase, id):
+        currentLoc = self.cur
+
+        if currentLoc[id][0] != 0:
+            return markerDatabase.findObjectById(id-1) + "을 찾았습니다!"
+
+        return None
 
 class markerGraph:
     """
@@ -430,6 +437,8 @@ def html_sending(s):
 
 #main function
 if __name__ == '__main__':
+    findingId = 5 # 꽃병
+
     #create marker database
     markerDatabase = markerDatabase()
     markerDatabase.initialize()
@@ -455,15 +464,23 @@ if __name__ == '__main__':
             break
 
         if ids is None:
-            print("Can't recognize")
+            #print("Can't recognize")
             continue
 
         aggregatedMarker = processMarker(ids, fixedCorners, rvecs, tvecs)
         currentMarkerLocation.updateLocation(aggregatedMarker)
         stringList = currentMarkerLocation.printLocation(markerDatabase)
         print(stringList)
-        html_sending(stringList)
+        # html_sending(stringList)
         speed_vector = currentMarkerLocation.calculateMarkerSpeed()
+
+        finded = currentMarkerLocation.findThisId(markerDatabase, findingId)
+        if finded is None:
+            continue
+        else:
+            print(finded)
+            html_sending(finded)
+
 
         grabbed_object = currentMarkerLocation.calculateDiff(speed_vector)
 
@@ -472,7 +489,7 @@ if __name__ == '__main__':
         else:
             stringList = currentMarkerLocation.printGrabbedObject(markerDatabase, grabbed_object)
             print(stringList)
-            html_sending(stringList)
+            #html_sending(stringList)
 
 
         #k = cv.waitKey(3000) & 0xFF
