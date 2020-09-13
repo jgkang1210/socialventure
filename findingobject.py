@@ -428,10 +428,17 @@ class markerDatabase:
 
 
 # Send to server
+def html_init():
+    str1 = "<!DOCTYPE html><html><head><title>hello</title></head><body></body>"
+    html_file = open('/home/pi/django/subuway/subuweb/templates/subuweb/index.h')
+    html_file.write(str1)
+    html_file.close()
+
+# Send to server
 def html_sending(s):
     str2 = s
-    str3 = "<!DOCTYPE html><html lang="+"kr"+"><head><meta charset="+"UTF-8>"+"<title>hello</title></head><body><h2>" + str2 + "</h2></body></html>"
-    html_file = open('index.html', 'w', encoding='utf8')
+    str3 = "<!DOCTYPE html><html lang=" + "kr" + "><head><meta charset=" + "UTF-8>" + "<title>hello</title></head><body><h2>" + str2 + "</h2></body></html>"
+    html_file = open('/home/pi/django/subuway/subuweb/templates/subuweb/index.h')
     html_file.write(str3)
     html_file.close()
 
