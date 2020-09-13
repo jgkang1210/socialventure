@@ -64,7 +64,7 @@ def generateCharucoBoard():
 def getCharucoBoardImgfromCamera():
     print("press esc to terminate")
     print("press c to capture")
-    cap = cv.VideoCapture(0)
+    cap = cv.VideoCapture(-1)
     i = 1 #step
 
     while (1):
@@ -165,7 +165,7 @@ def findMarkerOnScreen(mtx, dist, rvecs, tvecs):
     :return: map data
     """
     start = time.time()
-    cap = cv.VideoCapture(0)
+    cap = cv.VideoCapture(-1)
     i = 1  # step
 
     while (1):
