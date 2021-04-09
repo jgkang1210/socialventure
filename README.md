@@ -10,7 +10,7 @@ Opencv 와 아루코마커를 이용하여 시각장애인들이 사용할 수 �
 
 ## 영상
 
-
+https://youtu.be/N39_Hc4jSvc
 
 ## 기능
 
