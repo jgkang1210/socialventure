@@ -9,7 +9,10 @@ Opencv 와 아루코마커를 이용하여 시각장애인들이 사용할 수 �
 안경에는 라즈베리파이 zero w 를 탑재하여 아루코마커의 인식을 통해 주변 사물이 무엇인지 알려주고, 이를 앱을 통해 사용자에게 소리로 전달해준다.
 
 ## 영상
-[![0](http://img.youtube.com/vi/N39_Hc4jSvc/0.jpg)](http://www.youtube.com/watch?v=N39_Hc4jSvc "socialventure")
+<div align="center">
+  <a href="http://img.youtube.com/vi/N39_Hc4jSvc/0.jpg"><img src="(http://www.youtube.com/watch?v=N39_Hc4jSvc" alt="0"></a>
+</div>
+
 https://youtu.be/N39_Hc4jSvc
 
 ## 기능
